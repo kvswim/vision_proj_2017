@@ -17,15 +17,16 @@ def get_images_labels(filepath):
         subject = os.path.split(path)[1].split('.')[0].replace('subject','')
         face = face_cascade.detectMultiScale(grayscale_image)
         for (x, y, w, h) in face:
-            images.append(images[y: y+h][x: x+w])
+            images.append(grayscale_image[y: y+h, x: x+w])
             labels.append(subject)
-            print("Adding subject %s to DB" % subject)
+            print("Added subject %s to DB" % subject)
     return images, labels
 
 #using local binary patterns histograms algorithm
 #saves speed over Haar training
 
 images, labels = get_images_labels('./subjectimages')
-recognizer = cv2.createLBHFFaceRecognizer()
+recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.train(images, np.array(labels))
 recognizer.save('k_j_facedetect.xml')
+#recognizer.read
