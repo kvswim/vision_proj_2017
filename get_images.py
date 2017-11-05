@@ -33,7 +33,8 @@ class SplitFrames(object):
 #set: 60 fps, 69 seconds, captured 3316 frames at 55.23 fps
 #set: 90 fps, 56 seconds, captured 3198 frames at 57.04 fps
 #set: 120 fps, 56 seconds, captured 2999 frames at 53.49 fps
-#maybe we're limited by SD disk speed? 
+#maybe we're limited by SD disk speed?
+#resulting dataset from 3k images of 2 subjects is 560+ MB, gotta scale down to fit into RAM
 with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
     camera.start_preview()
     time.sleep(2) #just to give preview time to start
