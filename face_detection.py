@@ -14,7 +14,7 @@ import numpy as np
 #so we aren't slamming the SD
 stream = io.BytesIO()
 #loading the DB into RAM takes a long time because I'm using a potato for SD memory
-print("Loading database...")
+print("Loading database into RAM, this might take a while...")
 predictor = cv2.face.LBPHFaceRecognizer_create()
 predictor.read('k_j_facedetect.xml')
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
