@@ -3,10 +3,12 @@
 #get_images.py: captures images for use in training known user database
 #point rpi at subject and run this, will capture and save to ./subjectimages
 #usage: python get_images.py <subjectnumber> 
+import os
 import sys
 import io
 import time
 import picamera
+import shutil
 
 #Takes advantage of the "Magic numbers" in JPEG image files to
 #split live feed into many different images
@@ -43,10 +45,10 @@ class SplitFrames(object):
 print("Starting camera...")
 #720p60 is plenty of resolution at a framerate that is fast for capture without being too dark
 with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
-    #uncomment these if you are running the Pi on a TV or monitor, allows you to see preview to get subject in frame
+    #uncomment this if you are running the Pi on a TV or monitor, allows you to see preview to get subject in frame
     #camera.start_preview()
-    #time.sleep(2)
-
+    
+    time.sleep(2) #wait for the pi to settle its white balance
     output = SplitFrames()
     print("Starting subject capture, please wait (approx 1 min)...")
     start = time.time()
@@ -54,5 +56,15 @@ with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
     camera.wait_recording(60) #oh boy
     camera.stop_recording()
     finish = time.time()
-    print("Capture complete.")
-print('Captured %d frames in %d seconds at %.2f fps' % (output.frame_num, (finish-start), output.frame_num/(finish - start)))
+    print("Capture done.")
+print("Captured %d frames in %d seconds at %.2f fps." % (output.frame_num, (finish-start), output.frame_num/(finish - start)))
+
+#now to move all the jpg's into the dest folder since SplitFrames doesn't allow us to set destination directory
+print("Placing files in destination directory...")
+sourcepath = os.getcwd()
+source = os.listdir(sourcepath)
+destpath = sourcepath + "/subjectimages"
+for files in source:
+    if files.endswith(".jpg"):
+        shutil.move(os.path.join(sourcepath, files), os.path.join(destpath, files))
+print("Finished.")
