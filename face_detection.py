@@ -6,6 +6,12 @@ import numpy as np
 #init memory stream so images don't need to be saved/read
 #so we aren't slamming the SD
 stream = io.BytesIO()
+#loading the DB into RAM takes a long time because I'm using a potato for SD memory
+print("Loading database...")
+predictor = cv2.face.LBPHFaceRecognizer_create()
+predictor.read('k_j_facedetect.xml')
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
+print("Database loaded. Starting analysis...")
 
 #get image
 with picamera.PiCamera() as camera:
@@ -15,13 +21,11 @@ with picamera.PiCamera() as camera:
 buff = np.fromstring(stream.getvalue(), dtype = np.uint8)
 
 image = cv2.imdecode(buff, 1)
-face_cascade = cv2.CascadeClassifier('/home/pi/vision_proj_2017/haarcascade_frontalface_alt.xml')
+
 gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 faces = face_cascade.detectMultiScale(gray, 1.1, 5)
-predictor = cv2.face.LBPHFaceRecognizer_create()
-print("Loading database...")
-predictor.read('k_j_facedetect.xml')
-print("Database loaded.")
+
+
 print('found '+str(len(faces))+' faces')
 for (x,y,w,h) in faces:
 	cv2.rectangle(image, (x,y), (x+w, y+h), (255,255,0),2)

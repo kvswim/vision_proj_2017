@@ -1,3 +1,8 @@
+#Kyle Verdeyen
+#Computer Vision 600.431 Final Project
+#get_images.py: captures images for use in training known user database
+#point rpi at subject and run this, will capture and save to ./subjectimages
+#usage: python get_images.py <subjectnumber> 
 import sys
 import io
 import time
@@ -35,13 +40,19 @@ class SplitFrames(object):
 #set: 120 fps, 56 seconds, captured 2999 frames at 53.49 fps
 #maybe we're limited by SD disk speed?
 #resulting dataset from 3k images of 2 subjects is 560+ MB, gotta scale down to fit into RAM
+print("Starting camera...")
+#720p60 is plenty of resolution at a framerate that is fast for capture without being too dark
 with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
-    camera.start_preview()
-    time.sleep(2) #just to give preview time to start
+    #uncomment these if you are running the Pi on a TV or monitor, allows you to see preview to get subject in frame
+    #camera.start_preview()
+    #time.sleep(2)
+
     output = SplitFrames()
+    print("Starting subject capture, please wait (approx 1 min)...")
     start = time.time()
-    camera.start_recording(output, format = 'mjpeg')
+    camera.start_recording(output, format = 'mjpeg') #sliceable format
     camera.wait_recording(60) #oh boy
     camera.stop_recording()
     finish = time.time()
+    print("Capture complete.")
 print('Captured %d frames in %d seconds at %.2f fps' % (output.frame_num, (finish-start), output.frame_num/(finish - start)))
