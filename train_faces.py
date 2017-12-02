@@ -1,9 +1,9 @@
 #take series of images, identify face in image,
-#and train a classifier based on it 
+#and train a classifier based on it
+#todo: allow updating of database
 import sys
 import io
 import os
-import picamera
 import cv2
 import numpy as np
 
