@@ -1,6 +1,7 @@
 #Kyle Verdeyen
 #Computer Vision 600.431 Final Project
 #get_images.py: captures images for use in training known user database
+#to be run on a Raspberry Pi with camera device, not for PC use
 #point rpi at subject and run this, will capture and save to ./subjectimages
 #usage: python get_images.py <subjectnumber> 
 import os

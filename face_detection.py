@@ -1,3 +1,10 @@
+#Kyle Verdeyen
+#Computer Vision 600.461 Final Project
+#face_detection.py
+#Uses a CascadeClassifier to first detect face in frame
+#Then uses pretrained model to identify who it is
+#For raspberry pi use only - also requires OpenCV2 to be installed (must be built on device)
+#Todo: make this live update, push notifications (email?)
 import io
 import picamera
 import cv2
