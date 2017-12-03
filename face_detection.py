@@ -6,6 +6,7 @@
 #For raspberry pi use only - also requires OpenCV2 to be installed (must be built on device)
 #Todo: attach image of entrant in email
 import io
+import time
 import picamera
 import cv2
 import smtplib
@@ -46,7 +47,7 @@ def sendEmail(predicted, confidence):
 	message["From"], message["To"], message["Subject"] = originaddress, destaddress, "New entry detected!"
 	entrant = database[predicted]
 	if confidence > 50:
-		body = entrant + "has entered, with a confidence level of " + str(confidence)
+		body = entrant + " has entered, with a confidence level of " + str(confidence)
 	else:
 		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
 	body = MIMEText(body)
@@ -55,26 +56,29 @@ def sendEmail(predicted, confidence):
 	text = message.as_string()
 	server.sendmail(originaddress, destaddress, text)
 	server.close()
+
+
 #loading the DB into RAM takes a long time because I'm using a potato for SD memory
 print("Loading database into RAM, this might take a while...")
 predictor = cv2.face.LBPHFaceRecognizer_create()
 predictor.read('k_j_facedetect.xml')
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 print("Database loaded. Starting analysis...")
+lasttime = None #variable to check the last time an email was sent to prevent spamming
+
 
 #do this forever
-#while(True):
-for index in range(0, 1):
+while(True):
 	iostream = io.BytesIO()
 	grayimg = getImage(iostream)
 	facedetect = detectFace(grayimg)
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
-	if prediction != 0 and confidencelvl != 0.0:
-		# print("Prediction: ", prediction)
-		# print("Person", database[prediction])
-		# print("Confidence: ", confidencelvl)
-		sendEmail(prediction, confidencelvl)
+	if prediction != 0 and confidencelvl != 0.0: #we've detected someone in frame
+		if lasttime is None or time.time()-lasttime > 30: #if we have never sent an email or it's been at least 30 seconds since the last email
+			sendEmail(prediction, confidencelvl)
+			lasttime = time.time()
+		else:
+			print("email cooldown in effect")
 	else:
 		print("no faces found. continuing...")
 	del grayimg, facedetect, prediction, confidencelvl, iostream #start all over
-
