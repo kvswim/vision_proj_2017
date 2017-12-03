@@ -4,12 +4,14 @@
 #Uses a CascadeClassifier to first detect face in frame
 #Then uses pretrained model to identify who it is
 #For raspberry pi use only - also requires OpenCV2 to be installed (must be built on device)
-#Todo: make this live update, push notifications (email?)
+#Todo: attach image of entrant in email
 import io
 import picamera
 import cv2
+import smtplib
 import numpy as np
-
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
 #index conversions for identified people
 database = {1 : "Kyle", 2 : "Jenny"}
 
@@ -27,12 +29,31 @@ def detectFace(gray):
 	return faces
 
 def identifyFace(faces, gray):
-	predicted = int(0)
+	predicted = int(0) #in the event no faces are detected we want these to return 0
 	confidence = float(0)
 	for (x,y,w,h) in faces:
 		predicted, confidence = predictor.predict(gray[y:y+h, x:x+w])
 	return predicted, confidence
 
+def sendEmail(predicted, confidence):
+	server = smtplib.SMTP_SSL('smtp.gmail.com', 465) #SSL port for Gmail
+	server.ehlo() #identify ourselves to the server, Gmail prefers EHLO rather than HELO
+	server.login("pivision2017", "vision2017") #username, password (tester address pivision2017@gmail.com)
+	
+	originaddress = "pivision2017@gmail.com" #From:
+	destaddress = "pivision2017@gmail.com" #To:
+	message = MIMEMultipart() #compose a composite email
+	message["From"], message["To"], message["Subject"] = originaddress, destaddress, "New entry detected!"
+	entrant = database[predicted]
+	if confidence > 50:
+		body = entrant + "has entered, with a confidence level of " + confidence
+	else:
+		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + confidence
+	body = MIMEText(body)
+	message.attach(body)
+
+	server.sendmail(originaddress, destaddress, message)
+	server.close()
 #loading the DB into RAM takes a long time because I'm using a potato for SD memory
 print("Loading database into RAM, this might take a while...")
 predictor = cv2.face.LBPHFaceRecognizer_create()
@@ -41,15 +62,17 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 print("Database loaded. Starting analysis...")
 
 #do this forever
-while(True):
+#while(True):
+for index in range(0, 1):
 	iostream = io.BytesIO()
 	grayimg = getImage(iostream)
 	facedetect = detectFace(grayimg)
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
 	if prediction != 0 and confidencelvl != 0.0:
-		print("Prediction: ", prediction)
-		print("Person", database[prediction])
-		print("Confidence: ", confidencelvl)
+		# print("Prediction: ", prediction)
+		# print("Person", database[prediction])
+		# print("Confidence: ", confidencelvl)
+		sendEmail(prediction, confidencelvl)
 	else:
 		print("no faces found. continuing...")
 	del grayimg, facedetect, prediction, confidencelvl, iostream #start all over
