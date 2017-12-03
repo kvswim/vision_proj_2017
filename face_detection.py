@@ -34,6 +34,7 @@ def detectFace(gray):
 def identifyFace(faces, gray):
 	predicted = int(0) #in the event no faces are detected we want these to return 0
 	confidence = float(0)
+	faceimage = None
 	for (x,y,w,h) in faces:
 		predicted, confidence = predictor.predict(gray[y:y+h, x:x+w])
 		faceimage = gray[y:y+h, x:x+w]
@@ -56,9 +57,11 @@ def sendEmail(predicted, confidence, image):
 		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
 	body = MIMEText(body) #convert the string we just generated to MIME
 	message.attach(body) #attach to email message
-	encoded = cv2.imencode('.jpg', image)[1].tostring()
-	attachment = MIMEImage(encoded, _subtype='jpeg')
-	message.attach(attachment)
+	
+	if image is not None:
+		encoded = cv2.imencode('.jpg', image)[1].tostring()
+		attachment = MIMEImage(encoded, _subtype='jpeg')
+		message.attach(attachment)
 
 	text = message.as_string()
 	server.sendmail(originaddress, destaddress, text)
