@@ -12,9 +12,9 @@ import numpy as np
 
 #init memory stream so images don't need to be saved/read
 #so we aren't slamming the SD
-stream = io.BytesIO()
+#stream = io.BytesIO()
 
-def getImage():
+def getImage(stream):
 	with picamera.PiCamera() as camera:
 		camera.resolution = (640,480)
 		camera.capture(stream, format='jpeg')
@@ -43,7 +43,8 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 print("Database loaded. Starting analysis...")
 
 while(True):
-	grayimg = getImage()
+	iostream = io.BytesIO()
+	grayimg = getImage(iostream)
 	facedetect = detectFace(grayimg)
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
 	if prediction is not None and confidencelvl is not None:
@@ -51,7 +52,7 @@ while(True):
 		print("Confidence: ", confidencelvl)
 	else:
 		print("no faces found. continuing...")
-	del grayimg, facedetect, prediction, confidencelvl
+	del grayimg, facedetect, prediction, confidencelvl, iostream
 
 # print('found '+str(len(faces))+' faces')
 # print("Prediction:")
