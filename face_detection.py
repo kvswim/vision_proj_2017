@@ -85,6 +85,8 @@ while(True):
 	grayimg = getImage(iostream)
 	facedetect = detectFace(grayimg)
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
+	print(prediction)
+	print(confidencelvl)
 	if not prediction and not confidencelvl: #we've detected someone in frame, the two lists aren't empty
 		if lasttime is None or time.time()-lasttime > 30: #if we have never sent an email or it's been at least 30 seconds since the last email
 			sendEmail(prediction, confidencelvl)
