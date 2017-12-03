@@ -27,7 +27,9 @@ def detectFace(gray):
 	faces = face_cascade.detectMultiScale(gray, 1.1, 5)
 	return faces
 
-def identifyFace(faces):
+def identifyFace(faces, gray):
+	predicted = int(0)
+	confidence = float(0)
 	for (x,y,w,h) in faces:
 		#cv2.rectangle(image, (x,y), (x+w, y+h), (255,255,0),2)
 		predicted, confidence = predictor.predict(gray[y:y+h, x:x+w])
@@ -43,7 +45,7 @@ print("Database loaded. Starting analysis...")
 
 grayimg = getImage()
 facedetect = detectFace(grayimg)
-prediction, confidencelvl = identifyFace(facedetect)
+prediction, confidencelvl = identifyFace(facedetect, grayimg)
 print("Prediction: ", prediction)
 print("Confidence: ", confidencelvl)
 
