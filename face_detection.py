@@ -87,8 +87,9 @@ while(True):
 		if lasttime is None or time.time()-lasttime > 30: #if we have never sent an email or it's been at least 30 seconds since the last email
 			sendEmail(prediction, confidencelvl, faceimg)
 			lasttime = time.time()
+			print("Email sent!")
 		else:
-			print("email cooldown in effect")
+			print("email cooldown in effect, but detected %s with confidence of %f" % database[prediction], confidencelvl)
 	else:
 		print("no faces found. continuing...")
 	del grayimg, facedetect, prediction, confidencelvl, iostream #start all over
