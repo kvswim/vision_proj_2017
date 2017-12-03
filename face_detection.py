@@ -41,18 +41,18 @@ predictor = cv2.face.LBPHFaceRecognizer_create()
 predictor.read('k_j_facedetect.xml')
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 print("Database loaded. Starting analysis...")
-
+#do this forever
 while(True):
 	iostream = io.BytesIO()
 	grayimg = getImage(iostream)
 	facedetect = detectFace(grayimg)
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
-	if prediction is not None and confidencelvl is not None:
+	if prediction != 0 and confidencelvl != 0.0:
 		print("Prediction: ", prediction)
 		print("Confidence: ", confidencelvl)
 	else:
 		print("no faces found. continuing...")
-	del grayimg, facedetect, prediction, confidencelvl, iostream
+	del grayimg, facedetect, prediction, confidencelvl, iostream #start all over
 
 # print('found '+str(len(faces))+' faces')
 # print("Prediction:")
