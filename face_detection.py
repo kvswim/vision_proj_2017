@@ -36,8 +36,8 @@ def identifyFace(faces, gray):
 	confidence = float(0)
 	for (x,y,w,h) in faces:
 		predicted, confidence = predictor.predict(gray[y:y+h, x:x+w])
-		#faceimage = gray[y:y+h, x:x+w]
-		check, faceimage = cv2.imencode('.jpg', cv2.cvtColor(gray[y:y+h, x:x+w], cv2.COLOR_GRAY2RGB), [cv2.IMWRITE_JPEG_QUALITY, 75])
+		faceimage = gray[y:y+h, x:x+w]
+		faceimage = cv2.cvtColor(gray[y:y+h, x:x+w], cv2.COLOR_GRAY2RGB)
 	return predicted, confidence, faceimage
 
 def sendEmail(predicted, confidence, image):
@@ -56,8 +56,8 @@ def sendEmail(predicted, confidence, image):
 		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
 	body = MIMEText(body) #convert the string we just generated to MIME
 	message.attach(body) #attach to email message
-	#encodecomplete, encoded = cv2.imencode('.jpg', image)
-	attachment = MIMEImage(image)
+	encoded = cv2.imencode('.jpg', image)[1].tostring()
+	attachment = MIMEImage(encoded, _subtype='jpeg')
 	message.attach(attachment)
 
 	text = message.as_string()
