@@ -10,9 +10,8 @@ import picamera
 import cv2
 import numpy as np
 
-#init memory stream so images don't need to be saved/read
-#so we aren't slamming the SD
-#stream = io.BytesIO()
+#index conversions for identified people
+database = {1 : "Kyle", 2 : "Jenny"}
 
 def getImage(stream):
 	with picamera.PiCamera() as camera:
@@ -31,7 +30,6 @@ def identifyFace(faces, gray):
 	predicted = int(0)
 	confidence = float(0)
 	for (x,y,w,h) in faces:
-		#cv2.rectangle(image, (x,y), (x+w, y+h), (255,255,0),2)
 		predicted, confidence = predictor.predict(gray[y:y+h, x:x+w])
 	return predicted, confidence
 
@@ -41,6 +39,7 @@ predictor = cv2.face.LBPHFaceRecognizer_create()
 predictor.read('k_j_facedetect.xml')
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 print("Database loaded. Starting analysis...")
+
 #do this forever
 while(True):
 	iostream = io.BytesIO()
@@ -54,12 +53,3 @@ while(True):
 		print("no faces found. continuing...")
 	del grayimg, facedetect, prediction, confidencelvl, iostream #start all over
 
-# print('found '+str(len(faces))+' faces')
-# print("Prediction:")
-# print(predicted)
-# print("Confidence:")
-# print(confidence)
-# cv2.imshow("Recognized face", image[y:y+h,x:x+w])
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# cv2.imwrite('result.jpg',image)
