@@ -56,7 +56,7 @@ def sendEmail(predicted, confidence, image):
 		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
 	body = MIMEText(body) #convert the string we just generated to MIME
 	message.attach(body) #attach to email message
-	encoded = cv2.imencode('.jpg', image)
+	encodecomplete, encoded = cv2.imencode('.jpg', image)
 	attachment = MIMEImage(encoded)
 	message.attach(attachment)
 
