@@ -41,11 +41,11 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 print("Database loaded. Starting analysis...")
 
 
-gray = getImage()
-faces = detectFace(gray)
-predicted, confidence = identifyFace(faces)
-print("Prediction: ", predicted)
-print("Confidence: ", confidence)
+grayimg = getImage()
+facedetect = detectFace(grayimg)
+prediction, confidencelvl = identifyFace(facedetect)
+print("Prediction: ", prediction)
+print("Confidence: ", confidencelvl)
 
 # print('found '+str(len(faces))+' faces')
 # print("Prediction:")
