@@ -48,6 +48,7 @@ while(True):
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
 	if prediction != 0 and confidencelvl != 0.0:
 		print("Prediction: ", prediction)
+		print("Person", database[prediction])
 		print("Confidence: ", confidencelvl)
 	else:
 		print("no faces found. continuing...")
