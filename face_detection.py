@@ -46,9 +46,9 @@ def sendEmail(predicted, confidence):
 	message["From"], message["To"], message["Subject"] = originaddress, destaddress, "New entry detected!"
 	entrant = database[predicted]
 	if confidence > 50:
-		body = entrant + "has entered, with a confidence level of " + confidence
+		body = entrant + "has entered, with a confidence level of " + str(confidence)
 	else:
-		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + confidence
+		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
 	body = MIMEText(body)
 	message.attach(body)
 
