@@ -29,7 +29,7 @@ def detectFace(gray):
 
 def identifyFace(faces):
 	for (x,y,w,h) in faces:
-		cv2.rectangle(image, (x,y), (x+w, y+h), (255,255,0),2)
+		#cv2.rectangle(image, (x,y), (x+w, y+h), (255,255,0),2)
 		predicted, confidence = predictor.predict(gray[y:y+h, x:x+w])
 	return predicted, confidence
 
@@ -41,8 +41,8 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 print("Database loaded. Starting analysis...")
 
 
-grayimg = getImage()
-faces = detectFace(grayimg)
+gray = getImage()
+faces = detectFace(gray)
 predicted, confidence = identifyFace(faces)
 print("Prediction: ", predicted)
 print("Confidence: ", confidence)
