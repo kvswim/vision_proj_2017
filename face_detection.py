@@ -46,7 +46,7 @@ while(True):
 	grayimg = getImage()
 	facedetect = detectFace(grayimg)
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
-	if (prediction != 0) and (confidencelvl != 0.0):
+	if prediction is not None and confidencelvl is not None:
 		print("Prediction: ", prediction)
 		print("Confidence: ", confidencelvl)
 	else:
