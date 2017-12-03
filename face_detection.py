@@ -52,7 +52,8 @@ def sendEmail(predicted, confidence):
 	body = MIMEText(body)
 	message.attach(body)
 
-	server.sendmail(originaddress, destaddress, message)
+	text = message.as_string()
+	server.sendmail(originaddress, destaddress, text)
 	server.close()
 #loading the DB into RAM takes a long time because I'm using a potato for SD memory
 print("Loading database into RAM, this might take a while...")
