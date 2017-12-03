@@ -2,7 +2,7 @@
 #Computer Vision 600.431 Final Project
 #get_images.py: captures images for use in training known user database
 #to be run on a Raspberry Pi with camera device, not for PC use
-#point rpi at subject and run this, will capture approximately 3000 images and save to ./subjectimages
+#point rpi at subject and run this, will capture approximately 1000 images and save to ./subjectimages
 #usage: python get_images.py <subjectnumber> 
 import os
 import sys
@@ -33,16 +33,7 @@ class SplitFrames(object):
             self.output = io.open('subject%s.image%02d.jpg' % (sys.argv[1], self.frame_num), 'wb')
         self.output.write(buffer) #out
 
-#now to record and split
-#we require about 3-5000 images of both positive and negative examples
-#in order to train a Haar Cascade
-#60fps for 60 seconds theoretically 3600
-#90 fps needs 56 seconds to capture 5000!
-#set: 60 fps, 69 seconds, captured 3316 frames at 55.23 fps
-#set: 90 fps, 56 seconds, captured 3198 frames at 57.04 fps
-#set: 120 fps, 56 seconds, captured 2999 frames at 53.49 fps
-#maybe we're limited by SD disk speed?
-#resulting dataset from 3k images of 2 subjects is 560+ MB, gotta scale down to fit into RAM
+#record and split
 print("Starting camera...")
 #720p60 is plenty of resolution at a framerate that is fast for capture without being too dark
 with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
@@ -51,14 +42,15 @@ with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
     
     time.sleep(2) #wait for the pi to settle its white balance
     output = SplitFrames()
-    print("Starting subject capture, please wait (approx 1 min)...")
+    print("Starting subject capture, please wait (approx 20 seconds)...")
     start = time.time()
     camera.start_recording(output, format = 'mjpeg') #sliceable format
-    camera.wait_recording(60) #oh boy
+    camera.wait_recording(20) #oh boy
     camera.stop_recording()
     finish = time.time()
     print("Capture done.")
 print("Captured %d frames in %d seconds at %.2f fps." % (output.frame_num, (finish-start), output.frame_num/(finish - start)))
+
 
 #now to move all the jpg's into the dest folder since SplitFrames doesn't allow us to set destination directory
 print("Placing files in destination directory...")
