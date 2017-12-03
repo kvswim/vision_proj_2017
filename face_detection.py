@@ -51,6 +51,7 @@ while(True):
 		print("Confidence: ", confidencelvl)
 	else:
 		print("no faces found. continuing...")
+	del grayimg, facedetect, prediction, confidencelvl
 
 # print('found '+str(len(faces))+' faces')
 # print("Prediction:")
