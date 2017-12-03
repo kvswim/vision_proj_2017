@@ -30,11 +30,13 @@ def detectFace(gray):
 	return faces
 
 def identifyFace(faces, gray):
-	predicted = int(0) #in the event no faces are detected we want these to return 0
-	confidence = float(0)
+	predlist = []
+	conflist = []
 	for (x,y,w,h) in faces:
 		predicted, confidence = predictor.predict(gray[y:y+h, x:x+w])
-	return predicted, confidence
+		predlist.append(predicted)
+		conflist.append(confidence)
+	return predlist, conflist
 
 def sendEmail(predicted, confidence):
 	server = smtplib.SMTP_SSL('smtp.gmail.com', 465) #SSL port for Gmail
@@ -45,11 +47,21 @@ def sendEmail(predicted, confidence):
 	destaddress = "pivision2017@gmail.com" #To:
 	message = MIMEMultipart() #compose a composite email
 	message["From"], message["To"], message["Subject"] = originaddress, destaddress, "New entry detected!"
-	entrant = database[predicted]
-	if confidence > 50:
-		body = entrant + " has entered, with a confidence level of " + str(confidence)
-	else:
-		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
+	#build string of detected entrants
+	# entrant = ""
+	# for x in predicted:
+	# 	entrant += database[x] + ", "
+
+	# if confidence > 50:
+	# 	body = entrant + " has entered, with a confidence level of " + ', '.join(str(x) for x in confidence)
+	# else:
+	# 	body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
+	body = ""
+	for x in predicted:
+		if confidence[x] > 50:
+			body += database[x] + " has entered, with a confidence level of " + str(confidence[x]) + '\n'
+		else:
+			body += "Unknown entrant detected. I think it could be " + database[x] + "but my confidence is only " + str(confidence[x]) + '\n'
 	body = MIMEText(body)
 	message.attach(body)
 
@@ -73,7 +85,7 @@ while(True):
 	grayimg = getImage(iostream)
 	facedetect = detectFace(grayimg)
 	prediction, confidencelvl = identifyFace(facedetect, grayimg)
-	if prediction != 0 and confidencelvl != 0.0: #we've detected someone in frame
+	if not prediction and not confidencelvl: #we've detected someone in frame, the two lists aren't empty
 		if lasttime is None or time.time()-lasttime > 30: #if we have never sent an email or it's been at least 30 seconds since the last email
 			sendEmail(prediction, confidencelvl)
 			lasttime = time.time()
