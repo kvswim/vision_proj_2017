@@ -16,7 +16,7 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEImage import MIMEImage
 #index conversions for identified people
-database = {1 : "Kyle", 2 : "Jenny"}
+database = {1 : "Kyle", 2 : "Jenny", 3 : "Cori"}
 
 def getImage(stream):
 	with picamera.PiCamera() as camera:
@@ -89,7 +89,7 @@ while(True):
 			lasttime = time.time()
 			print("Email sent!")
 		else:
-			print("email cooldown in effect, but detected %s with confidence of %f" % database[prediction], confidencelvl)
+			print("email cooldown in effect, but detected %s with confidence of %f" % (database[prediction], confidencelvl))
 	else:
 		print("no faces found. continuing...")
 	del grayimg, facedetect, prediction, confidencelvl, iostream #start all over
