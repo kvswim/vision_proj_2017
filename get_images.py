@@ -36,7 +36,7 @@ class SplitFrames(object):
 #record and split
 print("Starting camera...")
 #720p60 is plenty of resolution at a framerate that is fast for capture without being too dark
-with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
+with picamera.PiCamera(resolution = '1080p', framerate = 30) as camera:
     #uncomment this if you are running the Pi on a TV or monitor, allows you to see preview to get subject in frame
     #camera.start_preview()
     
@@ -45,7 +45,7 @@ with picamera.PiCamera(resolution = '720p', framerate = 60) as camera:
     print("Starting subject capture, please wait (approx 20 seconds)...")
     start = time.time()
     camera.start_recording(output, format = 'mjpeg') #sliceable format
-    camera.wait_recording(20) #oh boy
+    camera.wait_recording(40) #oh boy
     camera.stop_recording()
     finish = time.time()
     print("Capture done.")
