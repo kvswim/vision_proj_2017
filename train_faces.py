@@ -4,8 +4,9 @@
 #take series of images, identify face in image, and train a classifier based on it
 #For PC use. Don't try running this on a Pi, you will CRASH your device.
 #This loves to eat RAM, 4GB+ highly recommended 
-#Try to keep the final database <400MB in order to fit into the Pi's RAM.
+#Try to keep the final database <350MB in order to fit into the Pi's RAM.
 #2 people with 1000 images each yields a database of size 261mb. 
+#3 people with 800 images each yields a database of size 322mb. 
 #todo: allow updating of database
 #dream todo: improve RAM consumption, multithread or CUDA support
 import sys
