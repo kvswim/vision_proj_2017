@@ -4,6 +4,7 @@
 #Uses a CascadeClassifier to first detect face in frame
 #Then uses pretrained model to identify who it is
 #For raspberry pi use only - also requires OpenCV2 to be installed (must be built on device)
+#Confidence is a measure of distance, lower is more sure. Typical values for a correctly identified face range 50-100
 #Todo: attach image of entrant in email
 #Extended todo: support recognition of multiple people in frame
 import io
@@ -20,7 +21,7 @@ database = {1 : "Kyle", 2 : "Jenny", 3 : "Cori"}
 
 def getImage(stream):
 	with picamera.PiCamera() as camera:
-		camera.resolution = (640,480)
+		camera.resolution = (1920, 1080) #originally 640*480 but was getting inaccurate results. computation speed greatly reduced 
 		camera.capture(stream, format='jpeg')
 	buff = np.fromstring(stream.getvalue(), dtype = np.uint8)
 	image = cv2.imdecode(buff, 1)
@@ -51,10 +52,10 @@ def sendEmail(predicted, confidence, image):
 	message = MIMEMultipart() #compose a composite email
 	message["From"], message["To"], message["Subject"] = originaddress, destaddress, "New entry detected!"
 	entrant = database[predicted]
-	if confidence > 50:
+	if confidence < 100:
 		body = entrant + " has entered, with a confidence level of " + str(confidence)
 	else:
-		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is only" + str(confidence)
+		body = "Unknown entrant detected. I think it's " + entrant + "but my confidence is " + str(confidence)
 	body = MIMEText(body) #convert the string we just generated to MIME
 	message.attach(body) #attach to email message
 	
